@@ -1,6 +1,9 @@
 @tool
 extends Area2D
 
+var completed := false
+
+
 @export var shape: GameTypes.ShapeType = GameTypes.ShapeType.CIRCLE:
 	set(value):
 		shape = value
@@ -58,8 +61,12 @@ func _on_store_body_entered(body):
 	if not body.is_in_group("player"):
 		return
 
+	if completed:
+		return
 	if not body.has_goal:
 		return
+	
+	completed = true
 
 	if body.goal_shape == shape and body.goal_color == color:
 		_correct_feedback()
@@ -68,9 +75,10 @@ func _on_store_body_entered(body):
 
 func _correct_feedback():
 	print("🎄 CORRECT STORE")
-	icon_rect.modulate = Color(1, 1, 1, 1)
-	icon_rect.scale = Vector2(1.3, 1.3)
+	#icon_rect.modulate = Color(1, 1, 1, 1)
+	#icon_rect.scale = Vector2(1.3, 1.3)
+	get_tree().call_group("game", "on_assignment_completed")
 
 func _wrong_feedback():
 	print("❌ WRONG STORE")
-	icon_rect.modulate = Color(1, 0.3, 0.3)
+	#icon_rect.modulate = Color(1, 0.3, 0.3)
