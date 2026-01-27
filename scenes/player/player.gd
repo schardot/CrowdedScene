@@ -1,8 +1,11 @@
 extends CharacterBody2D
 
 @export var  speed := 200.0
+var goal_shape: GameTypes.ShapeType
+var goal_color: GameTypes.ColorType
+var has_goal := true
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 
 	# Get the input direction and handle the movement/deceleration.
 	# As good practice, you should replace UI actions with custom gameplay actions.
@@ -19,3 +22,7 @@ func _physics_process(delta: float) -> void:
 
 	velocity = direction.normalized() * speed
 	move_and_slide()
+
+func _ready() -> void:
+	goal_shape = GameTypes.ShapeType.CIRCLE
+	goal_color = GameTypes.ColorType.RED
