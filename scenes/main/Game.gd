@@ -46,12 +46,11 @@ func generate_assignment():
 
 	var store = available_stores.pick_random()
 
-	player.set_goal(store.shape, store.color)
+	player.set_goal(store.color)
 
 	print(
 		"NEW ASSIGNMENT:",
 		store.name,
-		store.shape,
 		store.color
 	)
 
