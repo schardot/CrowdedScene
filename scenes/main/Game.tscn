@@ -1,0 +1,139 @@
+[gd_scene load_steps=8 format=3 uid="uid://bx3oguwcxqllf"]
+
+[ext_resource type="Script" uid="uid://br4nwm45o4d25" path="res://scenes/main/Game.gd" id="1_15kd6"]
+[ext_resource type="PackedScene" uid="uid://brwopraptvbiv" path="res://scenes/player/Player.tscn" id="1_q24mn"]
+[ext_resource type="Script" uid="uid://bifr411verfq1" path="res://scenes/player/player.gd" id="2_gyg6b"]
+[ext_resource type="Texture2D" uid="uid://cy0nye0c5e82a" path="res://icon.svg" id="3_dc040"]
+[ext_resource type="PackedScene" uid="uid://b1vm5fu64tcxp" path="res://scenes/world/Store.tscn" id="4_gyg6b"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_q24mn"]
+size = Vector2(455, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_15kd6"]
+size = Vector2(1000, 720)
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_15kd6")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(642, 360)
+
+[node name="WorldBounds" type="Node2D" parent="."]
+visible = false
+
+[node name="Wall_Bottom" type="StaticBody2D" parent="WorldBounds"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldBounds/Wall_Bottom"]
+position = Vector2(639, 717)
+scale = Vector2(2.8, 0.5)
+shape = SubResource("RectangleShape2D_q24mn")
+
+[node name="Wall_Top" type="StaticBody2D" parent="WorldBounds"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldBounds/Wall_Top"]
+position = Vector2(641, 6)
+scale = Vector2(2.8, 0.5)
+shape = SubResource("RectangleShape2D_q24mn")
+
+[node name="Wall_Left" type="StaticBody2D" parent="WorldBounds"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldBounds/Wall_Left"]
+position = Vector2(-5, 359)
+rotation = 1.5707964
+scale = Vector2(1.6, 0.5)
+shape = SubResource("RectangleShape2D_q24mn")
+
+[node name="Wall_Right" type="StaticBody2D" parent="WorldBounds"]
+position = Vector2(-47, 73)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldBounds/Wall_Right"]
+position = Vector2(1332, 285)
+rotation = 1.5707964
+scale = Vector2(1.6, 0.5)
+shape = SubResource("RectangleShape2D_q24mn")
+
+[node name="WordVisuals" type="Node2D" parent="."]
+
+[node name="Floor" type="ColorRect" parent="WordVisuals"]
+custom_minimum_size = Vector2(1280, 720)
+offset_right = 424.0
+offset_bottom = 245.0
+color = Color(0.36499706, 0.46011692, 0.44878465, 1)
+
+[node name="Frame" type="Node2D" parent="WordVisuals"]
+
+[node name="Line2D" type="Line2D" parent="WordVisuals/Frame"]
+points = PackedVector2Array(0, 0, 1280, 0, 1280, 720, 0, 720, 0, 0)
+
+[node name="Street" type="Area2D" parent="WordVisuals"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WordVisuals/Street"]
+position = Vector2(640, 360)
+shape = SubResource("RectangleShape2D_15kd6")
+
+[node name="Node2D" type="Node2D" parent="WordVisuals/Street"]
+
+[node name="ColorRect" type="ColorRect" parent="WordVisuals/Street/Node2D"]
+offset_left = 140.0
+offset_right = 1140.0
+offset_bottom = 720.0
+color = Color(0.2357319, 0.23573193, 0.2357319, 1)
+
+[node name="Player" parent="." instance=ExtResource("1_q24mn")]
+position = Vector2(1005, 361)
+script = ExtResource("2_gyg6b")
+
+[node name="Sprite2D" type="Sprite2D" parent="Player"]
+position = Vector2(3, -5)
+texture = ExtResource("3_dc040")
+
+[node name="LeftBlock" type="Node2D" parent="."]
+light_mask = 2
+position = Vector2(2, 26)
+
+[node name="Store" parent="LeftBlock" instance=ExtResource("4_gyg6b")]
+position = Vector2(73, 88)
+
+[node name="Store2" parent="LeftBlock" instance=ExtResource("4_gyg6b")]
+position = Vector2(73, 209)
+shape = 1
+color = 1
+
+[node name="Store3" parent="LeftBlock" instance=ExtResource("4_gyg6b")]
+position = Vector2(73, 337)
+shape = 2
+color = 2
+
+[node name="Store4" parent="LeftBlock" instance=ExtResource("4_gyg6b")]
+position = Vector2(73, 465)
+shape = 3
+color = 2
+
+[node name="Store5" parent="LeftBlock" instance=ExtResource("4_gyg6b")]
+position = Vector2(73, 593)
+color = 0
+
+[node name="RightBlock" type="Node2D" parent="."]
+light_mask = 2
+position = Vector2(1122, 26)
+metadata/_edit_group_ = true
+
+[node name="Store" parent="RightBlock" instance=ExtResource("4_gyg6b")]
+position = Vector2(73, 88)
+shape = 2
+color = 2
+
+[node name="Store2" parent="RightBlock" instance=ExtResource("4_gyg6b")]
+position = Vector2(73, 209)
+shape = 1
+
+[node name="Store3" parent="RightBlock" instance=ExtResource("4_gyg6b")]
+position = Vector2(73, 337)
+
+[node name="Store4" parent="RightBlock" instance=ExtResource("4_gyg6b")]
+position = Vector2(73, 465)
+shape = 3
+color = 1
+
+[node name="Store5" parent="RightBlock" instance=ExtResource("4_gyg6b")]
+position = Vector2(73, 593)
