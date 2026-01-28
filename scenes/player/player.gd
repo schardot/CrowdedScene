@@ -6,23 +6,35 @@ var has_goal := false
 
 @onready var thought_bubble := $ThoughtBubble
 
-func _physics_process(_delta: float) -> void:
-
-	# Get the input direction and handle the movement/deceleration.
-	# As good practice, you should replace UI actions with custom gameplay actions.
-	var direction := Vector2.ZERO
+func _physics_process(delta: float) -> void:
+	var input_dir := Vector2.ZERO
 	
 	if Input.is_action_pressed("ui_right"):
-		direction.x += 1
+		input_dir.x += 1
 	if Input.is_action_pressed("ui_left"):
-		direction.x -= 1
+		input_dir.x -= 1
 	if Input.is_action_pressed("ui_down"):
-		direction.y += 1
+		input_dir.y += 1
 	if Input.is_action_pressed("ui_up"):
-		direction.y -= 1
+		input_dir.y -= 1
 
-	velocity = direction.normalized() * speed
+	# 1. Start from current velocity
+	var desired_velocity = input_dir.normalized() * speed
+
+	# 2. Blend input with existing velocity
+	velocity = velocity.move_toward(desired_velocity, speed * 6 * delta)
+
+	# 3. Move
 	move_and_slide()
+
+	# 4. Apply crowd push AFTER movement
+	for i in get_slide_collision_count():
+		var collision = get_slide_collision(i)
+		var collider = collision.get_collider()
+
+		if collider.is_in_group("crowd"):
+			velocity += collision.get_normal() * 120
+
 
 func _ready() -> void:
 	thought_bubble.set_icon(
