@@ -65,10 +65,7 @@ func _on_store_body_entered(body):
 
 func _correct_feedback():
 	print("🎄 CORRECT STORE")
-	#icon_rect.modulate = Color(1, 1, 1, 1)
-	#icon_rect.scale = Vector2(1.3, 1.3)
 	get_tree().call_group("game", "on_assignment_completed")
 
 func _wrong_feedback():
 	print("❌ WRONG STORE")
-	#icon_rect.modulate = Color(1, 0.3, 0.3)
