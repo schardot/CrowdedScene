@@ -17,8 +17,8 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-GameTypes="*res://scripts/GameTypes.gd"
-SceneManager="*res://scenes/core/SceneManager.gd"
+GameTypes="*res://systems/GameTypes.gd"
+SceneManager="*res://systems/SceneManager.gd"
 
 [display]
 
