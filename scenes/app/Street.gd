@@ -31,8 +31,8 @@ func clamp_point_to_street(world_point: Vector2, world_margin: float) -> Vector2
 		var inv := collision_shape.global_transform.affine_inverse()
 		var local_point := inv * world_point
 
-		var scale := collision_shape.global_transform.get_scale()
-		var local_margin : float = world_margin / max(scale.x, scale.y)
+		var _scale := collision_shape.global_transform.get_scale()
+		var local_margin : float = world_margin / max(_scale.x, _scale.y)
 
 		var half_size : Vector2 = shape.size * 0.5
 
