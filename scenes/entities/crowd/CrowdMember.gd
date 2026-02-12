@@ -9,7 +9,6 @@ var direction := Vector2.ZERO
 func _ready():
 	_pick_new_direction()
 
-
 func _physics_process(_delta):
 	velocity = direction * speed
 	move_and_slide()
@@ -20,7 +19,6 @@ func _physics_process(_delta):
 	
 	if randi() % 120 == 0:
 		_pick_new_direction()
-
 
 func _pick_new_direction():
 	direction = Vector2(
@@ -39,6 +37,5 @@ func get_world_radius() -> float:
 	elif shape is RectangleShape2D:
 		local_radius = max(shape.size.x, shape.size.y) * 0.5
 
-	# Convert local radius to world units using scale
 	var _scale := collision_shape.global_transform.get_scale()
 	return local_radius * max(_scale.x, _scale.y)

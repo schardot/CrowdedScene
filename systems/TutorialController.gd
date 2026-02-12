@@ -18,7 +18,6 @@ func _ready() -> void:
 	for store in stores:
 		store_map[store.store_id] = store
 		store.player_entered.connect(on_assignment_completed)
-		#store.set_physical_block(false);
 	
 	generate_assignment()
 
@@ -31,9 +30,13 @@ func generate_assignment():
 	currentStoreNode.unblock_store()
 	emit_signal("store_opened")
 	print(
-		"🎯 NEW ASSIGNMENT →",
-		"Current phase:", current_phase,
-		"Current Store Num:", currentStoreNum
+		"NEW ASSIGNMENT:",
+		"
+		Current phase: ", current_phase,
+		" 
+		Current Store Num:", currentStoreNum,
+		"
+		Current store node:", currentStoreNode
 	)
 	apply_phase_movement_rules()
 
@@ -60,7 +63,7 @@ func apply_phase_movement_rules():
 func tutorial_complete() -> void:
 	player.clear_goal()
 	reset_stores()
-	print("🎄 Tutorial completed 🎄")
+	print("Tutorial completed")
 	SceneManager.go_to_game()
 
 func reset_stores():
