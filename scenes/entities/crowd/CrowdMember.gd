@@ -40,5 +40,5 @@ func get_world_radius() -> float:
 		local_radius = max(shape.size.x, shape.size.y) * 0.5
 
 	# Convert local radius to world units using scale
-	var scale := collision_shape.global_transform.get_scale()
-	return local_radius * max(scale.x, scale.y)
+	var _scale := collision_shape.global_transform.get_scale()
+	return local_radius * max(_scale.x, _scale.y)

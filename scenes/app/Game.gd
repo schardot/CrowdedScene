@@ -22,6 +22,8 @@ func _ready() -> void:
 
 	# Collect all stores in scene
 	stores = get_tree().get_nodes_in_group("stores")
+	for store in stores:
+		store.unblock_store()
 	assert(stores.size() > 0)
 
 	# Spawn crowd

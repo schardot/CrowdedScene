@@ -2,8 +2,10 @@
 extends Area2D
 
 var completed := false
+signal player_entered()
+var blocked := true
 
-
+@export var store_id: int
 @export var color: GameTypes.ColorType = GameTypes.ColorType.RED:
 	set(value):
 		color = value
@@ -18,9 +20,16 @@ func _ready():
 func _sync_icon():
 	if not icon_rect:
 		return
+	#icon_rect.color = Color.SADDLE_BROWN
+	icon_rect.visible = false
+	if blocked == false:
+		icon_rect.color = _color_to_color(color)
 
+func unblock_store():
+	blocked = false
 	icon_rect.color = _color_to_color(color)
-
+	icon_rect.visible = true
+	#$StaticBody2D/CollisionShape2D.disabled = false
 
 func _color_to_color(c: GameTypes.ColorType) -> Color:
 	match c:
@@ -50,13 +59,11 @@ func _color_to_color(c: GameTypes.ColorType) -> Color:
 func _on_store_body_entered(body):
 	if not body.is_in_group("player"):
 		return
-
+	
 	if completed:
 		return
 	if not body.has_goal:
 		return
-	
-	completed = true
 
 	if body.goal_color == color:
 		_correct_feedback()
@@ -65,7 +72,12 @@ func _on_store_body_entered(body):
 
 func _correct_feedback():
 	print("🎄 CORRECT STORE")
-	get_tree().call_group("game", "on_assignment_completed")
+	completed = true
+	emit_signal("player_entered")
+	#get_tree().call_group("game", "on_assignment_completed")
 
 func _wrong_feedback():
 	print("❌ WRONG STORE")
+
+#func set_physical_block(enabled: bool):
+	#$StaticBody2D/CollisionShape2D.disabled = !enabled
