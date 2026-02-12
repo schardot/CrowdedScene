@@ -6,7 +6,6 @@ func set_icon(color: GameTypes.ColorType):
 	icon_rect.color = _color_to_color(color)
 	visible = true
 
-
 func _color_to_color(c: GameTypes.ColorType) -> Color:
 	match c:
 		GameTypes.ColorType.RED:

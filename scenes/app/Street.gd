@@ -2,15 +2,6 @@ extends Area2D
 
 @onready var collision_shape : CollisionShape2D = $CollisionShape2D
 
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
-	pass
-
 func get_random_point() -> Vector2:
 	var shape := collision_shape.shape
 	
@@ -31,8 +22,8 @@ func clamp_point_to_street(world_point: Vector2, world_margin: float) -> Vector2
 		var inv := collision_shape.global_transform.affine_inverse()
 		var local_point := inv * world_point
 
-		var scale := collision_shape.global_transform.get_scale()
-		var local_margin : float = world_margin / max(scale.x, scale.y)
+		var _scale := collision_shape.global_transform.get_scale()
+		var local_margin : float = world_margin / max(_scale.x, _scale.y)
 
 		var half_size : Vector2 = shape.size * 0.5
 

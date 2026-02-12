@@ -2,25 +2,29 @@
 extends Area2D
 
 var completed := false
+signal player_entered()
 
-
+@onready var icon_rect: ColorRect = $Visuals/Icon/ColorRect
+@onready var collision_shape: CollisionShape2D = $StaticBody2D/CollisionShape2D
+@export var store_id: int
 @export var color: GameTypes.ColorType = GameTypes.ColorType.RED:
 	set(value):
 		color = value
-		_sync_icon()
-
-@onready var icon_rect: ColorRect = $Visuals/Icon/ColorRect
 
 func _ready():
+	collision_shape.disabled = false
 	_sync_icon()
 	add_to_group("stores")
 
 func _sync_icon():
 	if not icon_rect:
 		return
-
+	icon_rect.visible = false
 	icon_rect.color = _color_to_color(color)
 
+func unblock_store():
+	collision_shape.set_deferred("disabled", true)
+	icon_rect.visible = true
 
 func _color_to_color(c: GameTypes.ColorType) -> Color:
 	match c:
@@ -50,13 +54,11 @@ func _color_to_color(c: GameTypes.ColorType) -> Color:
 func _on_store_body_entered(body):
 	if not body.is_in_group("player"):
 		return
-
+	
 	if completed:
 		return
 	if not body.has_goal:
 		return
-	
-	completed = true
 
 	if body.goal_color == color:
 		_correct_feedback()
@@ -64,8 +66,9 @@ func _on_store_body_entered(body):
 		_wrong_feedback()
 
 func _correct_feedback():
-	print("🎄 CORRECT STORE")
-	get_tree().call_group("game", "on_assignment_completed")
+	print("CORRECT STORE")
+	completed = true
+	emit_signal("player_entered")
 
 func _wrong_feedback():
-	print("❌ WRONG STORE")
+	print("WRONG STORE")

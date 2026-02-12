@@ -1,6 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://b1vm5fu64tcxp"]
+[gd_scene load_steps=4 format=3 uid="uid://b1vm5fu64tcxp"]
 
-[ext_resource type="Script" uid="uid://b8u52stq0x4k3" path="res://scenes/world/Store.gd" id="1_oflbb"]
+[ext_resource type="Script" uid="uid://bwwla6msaikjb" path="res://scenes/world/Store.gd" id="1_oflbb"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_oflbb"]
+size = Vector2(65, 95)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_j8nto"]
 size = Vector2(70, 100)
@@ -8,7 +11,11 @@ size = Vector2(70, 100)
 [node name="Store" type="Area2D" groups=["stores"]]
 collision_layer = 2
 script = ExtResource("1_oflbb")
-color = 3
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource("RectangleShape2D_oflbb")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_j8nto")
@@ -29,6 +36,6 @@ position = Vector2(-21, -20)
 [node name="ColorRect" type="ColorRect" parent="Visuals/Icon"]
 offset_right = 40.0
 offset_bottom = 40.0
-color = Color(0.94573015, 0.9604066, 0.9736032, 1)
+color = Color(1, 1, 0, 1)
 
 [connection signal="body_entered" from="." to="." method="_on_store_body_entered"]
