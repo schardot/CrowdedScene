@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="ChristmasRush"
-run/main_scene="uid://bw5agb10bsami"
+run/main_scene="uid://cgq5apkln5flv"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
 
