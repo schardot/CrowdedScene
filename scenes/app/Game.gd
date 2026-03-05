@@ -24,6 +24,8 @@ func _ready() -> void:
 	stores = get_tree().get_nodes_in_group("stores")
 	for store in stores:
 		store.unblock_store()
+		store.player_entered.connect(on_assignment_completed)
+		
 	assert(stores.size() > 0)
 
 	_spawn_crowd()
