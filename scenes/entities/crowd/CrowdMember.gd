@@ -12,19 +12,15 @@ func _ready():
 func _physics_process(_delta):
 	velocity = direction * speed
 	move_and_slide()
-
+	global_position.x = round(global_position.x)
 	if street:
 		var radius := get_world_radius()
 		global_position = street.clamp_point_to_street(global_position, radius)
 	
-	if randi() % 120 == 0:
-		_pick_new_direction()
+	velocity.x = 0
 
 func _pick_new_direction():
-	direction = Vector2(
-		randf_range(-1, 1),
-		randf_range(-1, 1)
-	).normalized()
+	direction = Vector2(0, [-1, 1].pick_random())
 
 func get_world_radius() -> float:
 	var shape := collision_shape.shape
