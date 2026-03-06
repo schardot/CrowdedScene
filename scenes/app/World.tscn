@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://c7mt612o4cb6b"]
+[gd_scene load_steps=10 format=3 uid="uid://c7mt612o4cb6b"]
 
 [ext_resource type="Script" uid="uid://cuats8koek3qw" path="res://scenes/app/World.gd" id="1_jdyhp"]
 [ext_resource type="PackedScene" uid="uid://bljngtx2b4nxw" path="res://scenes/world/Street.tscn" id="2_4t2ey"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://brwopraptvbiv" path="res://scenes/entities/player/Player.tscn" id="4_rahhb"]
 [ext_resource type="Script" uid="uid://y1oufkpstn01" path="res://scenes/entities/player/Player.gd" id="5_uva7b"]
 [ext_resource type="PackedScene" uid="uid://b1vm5fu64tcxp" path="res://scenes/world/Store.tscn" id="6_rrmlc"]
+[ext_resource type="Script" uid="uid://cqicvit4fp1n" path="res://systems/CrowdManager.gd" id="7_4t2ey"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_q24mn"]
 size = Vector2(455, 20)
@@ -23,8 +24,10 @@ offset_bottom = 245.0
 color = Color(0.36499706, 0.46011692, 0.44878465, 1)
 
 [node name="Frame" type="Node2D" parent="Environment"]
+visible = false
 
 [node name="Line2D" type="Line2D" parent="Environment/Frame"]
+visible = false
 points = PackedVector2Array(0, 0, 1280, 0, 1280, 720, 0, 720, 0, 0)
 
 [node name="Street" parent="Environment" instance=ExtResource("2_4t2ey")]
@@ -35,10 +38,13 @@ position = Vector2(642, 360)
 [node name="Boundaries" type="Node2D" parent="."]
 
 [node name="WallBottom" parent="Boundaries" instance=ExtResource("2_jdyhp")]
+visible = false
 
 [node name="WallTop" type="StaticBody2D" parent="Boundaries"]
+visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Boundaries/WallTop"]
+visible = false
 position = Vector2(641, 6)
 scale = Vector2(2.8, 0.5)
 shape = SubResource("RectangleShape2D_q24mn")
@@ -102,6 +108,7 @@ position = Vector2(640, 360)
 script = ExtResource("5_uva7b")
 
 [node name="Crowd" type="Node2D" parent="Entities"]
+script = ExtResource("7_4t2ey")
 
 [node name="Stores" type="Node2D" parent="Entities"]
 

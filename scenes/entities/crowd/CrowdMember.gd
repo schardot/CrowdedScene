@@ -1,4 +1,5 @@
 extends CharacterBody2D
+class_name CrowdMember
 
 @export var speed := 60.0
 
@@ -7,20 +8,23 @@ var direction := Vector2.ZERO
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 
 func _ready():
-	_pick_new_direction()
+	pass
 
 func _physics_process(_delta):
 	velocity = direction * speed
 	move_and_slide()
-	global_position.x = round(global_position.x)
 	if street:
 		var radius := get_world_radius()
 		global_position = street.clamp_point_to_street(global_position, radius)
-	
-	velocity.x = 0
 
 func _pick_new_direction():
 	direction = Vector2(0, [-1, 1].pick_random())
+
+func set_direction_from_spawn(spawn_pos: Vector2, street_center: Vector2):
+	if spawn_pos.y < street_center.y:
+		direction = Vector2.DOWN
+	else:
+		direction = Vector2.UP
 
 func get_world_radius() -> float:
 	var shape := collision_shape.shape
