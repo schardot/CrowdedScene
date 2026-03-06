@@ -9,7 +9,10 @@ size = Vector2(65, 95)
 size = Vector2(70, 100)
 
 [node name="Store" type="Area2D" groups=["stores"]]
-collision_layer = 2
+collision_layer = 0
+collision_mask = 0
+monitoring = false
+monitorable = false
 script = ExtResource("1_oflbb")
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
