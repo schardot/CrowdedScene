@@ -8,8 +8,9 @@ height = 48.0
 
 [node name="CrowdMember" type="CharacterBody2D" groups=["crowd"]]
 z_index = 2
+scale = Vector2(1.5, 1.5)
 collision_layer = 4
-collision_mask = 6
+collision_mask = 2
 script = ExtResource("1_g3vus")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

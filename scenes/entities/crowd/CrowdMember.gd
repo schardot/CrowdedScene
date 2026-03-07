@@ -1,10 +1,11 @@
 extends CharacterBody2D
 class_name CrowdMember
 
-@export var speed := 60.0
+@export var speed := 20.0
 
 var street: Area2D
 var direction := Vector2.ZERO
+var push_offset: Vector2 = Vector2.ZERO
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 
 func _ready():
@@ -12,11 +13,21 @@ func _ready():
 
 func _physics_process(_delta):
 	velocity = direction * speed
+	
+	if push_offset != Vector2.ZERO:
+		velocity += push_offset
+		push_offset = Vector2.ZERO
+		
 	move_and_slide()
+
 	if street:
 		var radius := get_world_radius()
 		global_position = street.clamp_point_to_street(global_position, radius)
 
+func apply_push(dir: Vector2):
+	push_offset += dir * 3000
+
+	
 func _pick_new_direction():
 	direction = Vector2(0, [-1, 1].pick_random())
 
