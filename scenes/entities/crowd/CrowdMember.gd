@@ -1,7 +1,13 @@
 extends CharacterBody2D
 class_name CrowdMember
 
-@export var speed := 20.0
+var speed := 40.0
+
+# ---- TUTORIAL SETTINGS ONLY 
+var has_target := false
+var target_position: Vector2
+var arrived := false
+# ----------------------------
 
 var street: Area2D
 var direction := Vector2.ZERO
@@ -12,8 +18,10 @@ func _ready():
 	pass
 
 func _physics_process(_delta):
+	if has_target:
+		set_tutorial_npc()
+			
 	velocity = direction * speed
-	
 	if push_offset != Vector2.ZERO:
 		velocity += push_offset
 		push_offset = Vector2.ZERO
@@ -50,3 +58,13 @@ func get_world_radius() -> float:
 
 	var _scale := collision_shape.global_transform.get_scale()
 	return local_radius * max(_scale.x, _scale.y)
+
+func set_tutorial_npc():
+	var dir = target_position - global_position
+		
+	if dir.length() < 5:
+		direction = Vector2.ZERO
+		has_target = false
+		speed = 0
+	else:
+		direction = dir.normalized()
