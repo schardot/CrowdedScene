@@ -2,7 +2,7 @@ extends Node2D
 
 const ASSIGNMENTS_TO_WIN := 5
 
-var completed_assignments := 0
+var completed_assignments := 0 
 var level_completed := false
 
 @onready var world: Node2D  = $World
@@ -12,22 +12,13 @@ var level_completed := false
 
 var stores: Array = []
 
-
 func _ready() -> void:
 	randomize()
-	if SceneManager.player_position != Vector2.ZERO:
-		player.global_position = SceneManager.player_position
 	add_to_group("game")
-
-	stores = get_tree().get_nodes_in_group("stores")
-	for store in stores:
-		store.unblock_store()
-		store.player_entered.connect(on_assignment_completed)
-		
-	assert(stores.size() > 0)
-
-	crowd_container.street = street
-	crowd_container.spawn_crowd()
+	
+	init_player()
+	init_stores()
+	init_npcs()
 
 	generate_assignment()
 
@@ -46,22 +37,13 @@ func generate_assignment() -> void:
 		return
 
 	var store = available_stores.pick_random()
-
 	player.set_goal(store.color)
-
-	print(
-		"🎯 NEW ASSIGNMENT →",
-		store.name,
-		store.color
-	)
-
 
 func on_assignment_completed() -> void:
 	if level_completed:
 		return
 
 	completed_assignments += 1
-	print("✅ ASSIGNMENTS COMPLETED:", completed_assignments)
 
 	if completed_assignments >= ASSIGNMENTS_TO_WIN:
 		end_level()
@@ -71,5 +53,21 @@ func on_assignment_completed() -> void:
 func end_level() -> void:
 	level_completed = true
 	player.clear_goal()
-	print("🎄 LEVEL COMPLETED 🎄")
 	SceneManager.go_to_end_screen()
+
+# ---- INIT FUNCTIONS
+
+func init_player():
+	if SceneManager.player_position != Vector2.ZERO:
+		player.global_position = SceneManager.player_position
+
+func init_stores():
+	stores = get_tree().get_nodes_in_group("stores")
+	for store in stores:
+		store.unblock_store()
+		store.player_entered.connect(on_assignment_completed)
+	assert(stores.size() > 0)
+
+func init_npcs():
+	crowd_container.street = street
+	crowd_container.spawn_crowd()
