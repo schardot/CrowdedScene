@@ -2,6 +2,10 @@ extends Node
 
 @onready var world: Node2D = $"../World"
 @onready var player: CharacterBody2D = $"../World/Entities/Player"
+@onready var crowd_member = $"../TutorialActors/CrowdMember"
+@onready var stop_point = $"../Map/StoreEntrance/NpcStopPoint"
+@onready var spawn_point = $"../Map/SpawnPoint/NpcSpawnPoint"
+
 signal store_opened
 
 var current_phase = 0
@@ -13,6 +17,7 @@ func _ready() -> void:
 	await get_tree().process_frame
 	
 	init_stores()
+  init_npc()
 	
 	generate_assignment()
 
@@ -62,4 +67,11 @@ func init_stores():
 	for store in stores:
 		store_map[store.store_id] = store
 		store.player_entered.connect(on_assignment_completed)
+    
+func init_npc():
+  crowd_member.target_position = stop_point.global_position
+	crowd_member.has_target = true
+	crowd_member.speed = 70
+	crowd_member.global_position = spawn_point.global_position
+  
 	
