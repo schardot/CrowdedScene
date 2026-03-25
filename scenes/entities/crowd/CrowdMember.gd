@@ -35,6 +35,7 @@ func _physics_process(_delta):
 	if street:
 		var radius := get_world_radius()
 		global_position = street.clamp_point_to_street(global_position, radius)
+		_check_recycle()
 
 func apply_velocity():
 	velocity = direction * speed
@@ -44,6 +45,23 @@ func apply_velocity():
 	if separation_velocity != Vector2.ZERO:
 		velocity += separation_velocity
 		separation_velocity = Vector2.ZERO
+
+func _check_recycle():
+	if has_target:
+		return
+	var npc_half_height := 0.0
+	var s = collision_shape.shape
+	if s is CapsuleShape2D:
+		npc_half_height = s.height / 2.0 * collision_shape.global_transform.get_scale().y
+	var exit : int = street.get_y_exit(global_position, npc_half_height)
+	if exit == 0:
+		return
+	var spawn_top := exit == 1
+	global_position = street.get_spawn_line(spawn_top)
+	direction = Vector2.DOWN if spawn_top else Vector2.UP
+	push_offset = Vector2.ZERO
+	separation_velocity = Vector2.ZERO
+	was_pushed = false
 
 func _resolve_npc_collisions():
 	for i in get_slide_collision_count():

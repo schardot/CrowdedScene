@@ -41,3 +41,24 @@ func clamp_point_to_street(world_point: Vector2, world_margin: float) -> Vector2
 	
 func get_center():
 	return collision_shape.global_position
+
+func get_spawn_line(top: bool) -> Vector2:
+	var shape := collision_shape.shape
+	if shape is RectangleShape2D:
+		var half: Vector2 = shape.size / 2.0
+		var x := randf_range(-half.x, half.x)
+		var y := -half.y if top else half.y
+		return collision_shape.global_transform * Vector2(x, y)
+	push_error("Street: unsupported collision shape")
+	return global_position
+
+func get_y_exit(world_pos: Vector2, margin: float = 0.0) -> int:
+	var shape := collision_shape.shape
+	if shape is RectangleShape2D:
+		var local_y := (collision_shape.global_transform.affine_inverse() * world_pos).y
+		var half_y : float = shape.size.y / 2.0
+		if local_y < -(half_y + margin):
+			return -1
+		if local_y > half_y + margin:
+			return 1
+	return 0
