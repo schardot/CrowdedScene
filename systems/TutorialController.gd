@@ -1,12 +1,12 @@
 extends Node
 
 @onready var world: Node2D = $"../World"
-@onready var player: CharacterBody2D = $"../World/Entities/Player"
+var player: CharacterBody2D
 @onready var crowd_member = $"../TutorialActors/CrowdMember"
 @onready var stop_point = $"../Map/StoreEntrance/NpcStopPoint"
 @onready var spawn_point = $"../Map/SpawnPoint/NpcSpawnPoint"
-@onready var street: Area2D = $"../World/Environment/Street"
-@onready var crowd_container: CrowdManager = $"../World/Entities/Crowd"
+var street: Area2D
+var crowd_container: CrowdManager
 @onready var prompt := $"../SpaceToPushUi/TutorialPrompt"
 signal store_opened
 
@@ -19,6 +19,9 @@ var crowd_growth_started := false
 
 func _ready() -> void:
 	await get_tree().process_frame
+	player = world.get_player()
+	street = world.get_street()
+	crowd_container = world.get_crowd()
 	crowd_member.pushed.connect(_on_crowd_member_pushed)
 	
 	init_stores()

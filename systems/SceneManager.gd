@@ -31,3 +31,7 @@ func go_to_game():
 func go_to_end_screen():
 	set_pause(false)
 	get_tree().change_scene_to_file("res://scenes/ui/EndScreen.tscn")
+
+func go_to_lose_screen():
+	set_pause(false)
+	get_tree().change_scene_to_file("res://scenes/ui/LoseScreen.tscn")
