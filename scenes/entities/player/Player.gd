@@ -14,8 +14,6 @@ var can_move_down := true
 
 func _physics_process(delta: float) -> void:
 	var input_dir := Vector2.ZERO
-	if Input.is_action_just_pressed("push"):
-		push_npcs()
 	if Input.is_action_pressed("ui_right") && can_move_right:
 		input_dir.x += 1
 	if Input.is_action_pressed("ui_left") && can_move_left:
@@ -24,6 +22,13 @@ func _physics_process(delta: float) -> void:
 		input_dir.y += 1
 	if Input.is_action_pressed("ui_up") && can_move_up:
 		input_dir.y -= 1
+
+	if Input.is_action_just_pressed("push"):
+		var boost_dir: Vector2 = input_dir.normalized()
+		if boost_dir == Vector2.ZERO:
+			boost_dir = velocity.normalized()
+		if boost_dir != Vector2.ZERO:
+			velocity += boost_dir * 700.0
 
 	# 1. Start from current velocity
 	var desired_velocity = input_dir.normalized() * speed
@@ -70,3 +75,9 @@ func push_npcs():
 		if body.is_in_group("crowd"):
 			var dir = (body.global_position - global_position).normalized()
 			body.apply_push(dir)
+
+func die() -> void:
+	var sound: Node = get_node_or_null("/root/SoundController")
+	if sound and sound.has_method("play_car_crash_random"):
+		sound.call("play_car_crash_random")
+	SceneManager.go_to_lose_screen()

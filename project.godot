@@ -21,6 +21,7 @@ GameTypes="*res://systems/GameTypes.gd"
 SceneManager="*res://systems/SceneManager.gd"
 PauseManager="*res://systems/PauseManager.gd"
 Globals="*res://systems/Globals.gd"
+SoundController="*res://systems/SoundController.gd"
 
 [display]
 
@@ -86,3 +87,4 @@ push={
 2d_physics/layer_2="Player"
 2d_physics/layer_3="NPC"
 2d_physics/layer_4="Store"
+2d_physics/layer_5="Car"

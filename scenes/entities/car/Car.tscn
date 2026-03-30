@@ -1,0 +1,36 @@
+[gd_scene load_steps=5 format=3 uid="uid://5k71qukanrs8"]
+
+[ext_resource type="Script" uid="uid://bspjj3oxerehp" path="res://scenes/entities/car/Car.gd" id="1_brmlv"]
+[ext_resource type="Texture2D" uid="uid://cn7e3yhxpsqos" path="res://assets/sprites/car.png" id="2_r5e7o"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0ny80"]
+size = Vector2(53, 77)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_brmlv"]
+size = Vector2(58, 83)
+
+[node name="Car" type="CharacterBody2D"]
+collision_layer = 16
+collision_mask = 0
+script = ExtResource("1_brmlv")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_r5e7o")
+region_enabled = true
+region_rect = Rect2(605.704, 441.02795, 103.711975, 103.5)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0.5, 1.5)
+shape = SubResource("RectangleShape2D_0ny80")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+position = Vector2(-13, -24)
+rect = Rect2(-13, -13, 53, 78)
+
+[node name="Hitbox" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+position = Vector2(1, 2.5)
+shape = SubResource("RectangleShape2D_brmlv")

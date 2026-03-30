@@ -7,8 +7,9 @@ var level_completed := false
 
 @onready var world: Node2D  = $World
 @onready var player: Node = world.get_player()
-@onready var crowd_container: CrowdManager = $World/Entities/Crowd
-@onready var street: Area2D = $World/Environment/Street
+@onready var crowd_container: CrowdManager = world.get_crowd()
+@onready var street: Area2D = world.get_street()
+@onready var car: CharacterBody2D = world.get_car()
 
 var stores: Array = []
 
@@ -18,6 +19,7 @@ func _ready() -> void:
 	init_player()
 	init_stores()
 	init_npcs()
+	init_car()
 
 	generate_assignment()
 
@@ -76,3 +78,9 @@ func init_npcs():
 		SceneManager.crowd_positions.clear()
 	else:
 		crowd_container.spawn_crowd_staggered()
+
+func init_car() -> void:
+	if not car:
+		return
+	if car.has_method("spawn_car"):
+		car.call("spawn_car", street)
