@@ -13,7 +13,6 @@ var level_completed := false
 var stores: Array = []
 
 func _ready() -> void:
-	randomize()
 	add_to_group("game")
 	
 	init_player()
