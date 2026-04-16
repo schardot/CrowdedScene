@@ -8,6 +8,13 @@ const CROSSING_NPC_SCN: PackedScene = preload("res://scenes/entities/crossing/Cr
 @onready var street = world.get_street()
 @onready var car: Node2D = world.get_car()
 
+@export var crossing_spawn_chance: float = 0.2
+@export var crossing_try_interval: float = 5.0
+@export var crossing_row_memory_size: int = 2
+
+var crossing_spawn_timer: Timer
+var recent_crossing_rows: Array[int] = []
+
 var stores: Array = []
 var current_assignment_store: Area2D
 
@@ -17,6 +24,7 @@ func _ready() -> void:
 	init_player()
 	init_stores()
 	init_lanes()
+	_init_crossing_spawn_timer()
 
 	generate_assignment()
 
@@ -38,8 +46,7 @@ func generate_assignment() -> void:
 func on_assignment_completed(_completed_store: Area2D) -> void:
 	_completed_store.completed = false
 	_completed_store.unblock_store()
-	call_deferred("spawn_crossing_npc")
-	crowd_container.call_deferred("spawn_npc")
+	#crowd_container.call_deferred("spawn_npc")
 	generate_assignment()
 
 # ---- INIT FUNCTIONS
@@ -81,11 +88,31 @@ func init_car(lane: LaneStruct) -> void:
 	car.lane = lane
 	car.spawn_car(street)
 
+func _init_crossing_spawn_timer() -> void:
+	crossing_spawn_timer = Timer.new()
+	crossing_spawn_timer.one_shot = true
+	crossing_spawn_timer.autostart = false
+	crossing_spawn_timer.timeout.connect(_on_crossing_spawn_timer_timeout)
+	add_child(crossing_spawn_timer)
+	_schedule_next_crossing_try()
+
+func _schedule_next_crossing_try() -> void:
+	crossing_spawn_timer.wait_time = max(crossing_try_interval, 0.1)
+	crossing_spawn_timer.start()
+
+func _on_crossing_spawn_timer_timeout() -> void:
+	try_spawn_crossing_npc()
+	_schedule_next_crossing_try()
+
+func try_spawn_crossing_npc() -> void:
+	if randf() < crossing_spawn_chance:
+		spawn_crossing_npc()
+
 func spawn_crossing_npc() -> void:
 	if not world:
 		return
 
-	var pair: Array = world.get_random_store_pair()
+	var pair: Array = _pick_store_pair_with_memory()
 	if pair.size() < 2:
 		return
 
@@ -100,3 +127,29 @@ func spawn_crossing_npc() -> void:
 	world.get_entities_root().add_child(npc)
 	npc.z_index = 3
 	npc.spawn_from_stores(from_store, to_store)
+
+func _pick_store_pair_with_memory() -> Array:
+	var pairs: Array[Array] = world.get_store_pairs_by_row()
+	if pairs.is_empty():
+		return []
+
+	var candidate_rows: Array[int] = []
+	for i in range(pairs.size()):
+		if not recent_crossing_rows.has(i):
+			candidate_rows.append(i)
+
+	if candidate_rows.is_empty():
+		for i in range(pairs.size()):
+			candidate_rows.append(i)
+
+	var row_idx: int = candidate_rows.pick_random()
+	_remember_crossing_row(row_idx, pairs.size())
+	return pairs[row_idx]
+
+func _remember_crossing_row(row_idx: int, total_rows: int) -> void:
+	if crossing_row_memory_size <= 0:
+		return
+	var clamped_memory: int = clampi(crossing_row_memory_size, 1, max(total_rows - 1, 1))
+	recent_crossing_rows.append(row_idx)
+	while recent_crossing_rows.size() > clamped_memory:
+		recent_crossing_rows.remove_at(0)
