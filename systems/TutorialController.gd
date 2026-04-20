@@ -3,7 +3,7 @@ extends Node
 const SCRIPTED_EVENT_STORE_ID: int = 1
 const SCRIPTED_EVENT_FROM_STORE_ID: int = 2
 const SCRIPTED_EVENT_CAR_LANE_INDEX: int = 2
-const SCRIPTED_EVENT_BRAKE_DELAY_SEC: float = 1.0
+const SCRIPTED_EVENT_CAR_SPAWN_DELAY_SEC: float = 0.9
 const TUTORIAL_CROSSING_SPAWN_CHANCE: float = 0.2
 const TUTORIAL_CROSSING_TRY_INTERVAL: float = 5.0
 const TUTORIAL_CROSSING_MEMORY_SIZE: int = 2
@@ -11,24 +11,19 @@ const TUTORIAL_CROSSING_MEMORY_SIZE: int = 2
 @onready var world: Node2D = $"../World"
 var player: CharacterBody2D
 @onready var crowd_member = $"../TutorialActors/CrowdMember"
-@onready var stop_point = $"../Map/StoreEntrance/NpcStopPoint"
-@onready var spawn_point = $"../Map/SpawnPoint/NpcSpawnPoint"
 @onready var hint = $"../BoostHintUi"
 var street: Area2D
 var crowd_container: CrowdManager
-@onready var prompt := $"../SpaceToPushUi/TutorialPrompt"
 signal store_opened
 
 var current_phase = 0
 var assignment_order := [2, 7, 0, 9, 8, 1, 4, 3, 5, 6]
 var stores: Array
 var store_map := {}
-var first_push := false
-var crowd_growth_started := false
 var scripted_tutorial_event_done: bool = false
 var scripted_tutorial_car_original_speed: float = 0.0
-var scripted_crossing_active: bool = false
 var crossing_manager: CrossingManager
+var scripted_car_waiting_start: bool = false
 
 func _ready() -> void:
 	await get_tree().process_frame
@@ -66,13 +61,8 @@ func on_assignment_completed() -> void:
 		return
 
 	var next_store_num: int = assignment_order[current_phase]
-	if next_store_num != SCRIPTED_EVENT_STORE_ID:
-		call_deferred("_spawn_crossing_npc")
-
-	if crowd_growth_started:
-		crowd_container.street = street
-		crowd_container.call_deferred("spawn_npc")
-		crowd_container.call_deferred("spawn_npc")
+	if next_store_num != SCRIPTED_EVENT_STORE_ID and current_phase >= 1:
+		call_deferred("_try_spawn_crossing_npc_with_chance")
 
 	generate_assignment()
 
@@ -115,15 +105,15 @@ func init_npc():
 	crowd_member.velocity = Vector2.ZERO
 
 func _on_crowd_member_pushed():
-	crowd_growth_started = true
+	pass
 
 func _on_player_boost_used() -> void:
 	hint.hide_hint()
 
-func _spawn_crossing_npc() -> void:
+func _try_spawn_crossing_npc_with_chance() -> void:
 	if crossing_manager == null:
 		return
-	crossing_manager.spawn_crossing_npc()
+	crossing_manager.try_spawn_with_chance()
 
 func _start_scripted_tutorial_crossing_event() -> void:
 	if scripted_tutorial_event_done:
@@ -140,12 +130,11 @@ func _start_scripted_tutorial_crossing_event() -> void:
 	var npc: CrossingNpc = crossing_manager.spawn_crossing_npc(from_store, to_store)
 	if npc == null:
 		return
-	npc.crossing_started.connect(_on_scripted_crossing_started)
 	npc.crossing_ended.connect(_on_scripted_crossing_ended)
 
-	_prepare_scripted_tutorial_car()
+	call_deferred("_start_scripted_car_for_crossing", npc.row_y)
 
-func _prepare_scripted_tutorial_car() -> void:
+func _spawn_scripted_tutorial_car() -> void:
 	var car: Node = world.get_car()
 	if car == null:
 		return
@@ -157,8 +146,7 @@ func _prepare_scripted_tutorial_car() -> void:
 
 	var hitbox: Area2D = car.get_node_or_null("Hitbox")
 	if hitbox:
-		# Keep tutorial focused on the braking behavior instead of punishing collisions.
-		hitbox.monitoring = false
+		hitbox.monitoring = true
 
 	if SCRIPTED_EVENT_CAR_LANE_INDEX < 0 or SCRIPTED_EVENT_CAR_LANE_INDEX >= LaneManager.LanesArray.size():
 		return
@@ -175,18 +163,16 @@ func _prepare_scripted_tutorial_car() -> void:
 	scripted_tutorial_car_original_speed = car.get("target_speed")
 	car.set("current_speed", scripted_tutorial_car_original_speed)
 
-func _on_scripted_crossing_started(_row_y: float) -> void:
-	scripted_crossing_active = true
-	await get_tree().create_timer(SCRIPTED_EVENT_BRAKE_DELAY_SEC).timeout
-	if not scripted_crossing_active:
+func _start_scripted_car_for_crossing(_row_y: float) -> void:
+	scripted_car_waiting_start = true
+	if SCRIPTED_EVENT_CAR_SPAWN_DELAY_SEC > 0.0:
+		await get_tree().create_timer(SCRIPTED_EVENT_CAR_SPAWN_DELAY_SEC).timeout
+	if not scripted_car_waiting_start:
 		return
-	var car: Node = world.get_car()
-	if car == null:
-		return
-	car.set("target_speed", 0.0)
+	_spawn_scripted_tutorial_car()
 
 func _on_scripted_crossing_ended(_row_y: float) -> void:
-	scripted_crossing_active = false
+	scripted_car_waiting_start = false
 	var car: Node = world.get_car()
 	if car == null:
 		return
