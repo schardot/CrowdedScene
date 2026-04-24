@@ -76,9 +76,14 @@ func set_movement(left, right, up, down):
 	can_move_down = down
 	can_move_up = up
 
-func play_anim(name):
-	if $AnimatedSprite2D.animation != name:
-		$AnimatedSprite2D.play(name)
+func play_anim(name: StringName) -> void:
+	var sprite: AnimatedSprite2D = $AnimatedSprite2D
+	if sprite.sprite_frames == null:
+		return
+	if not sprite.sprite_frames.has_animation(name):
+		return
+	if sprite.animation != name:
+		sprite.play(name)
 
 func die() -> void:
 	SoundController.call("play_car_crash_random")

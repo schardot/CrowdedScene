@@ -53,3 +53,8 @@ func _setup_area():
 
 	if not body_entered.is_connected(_on_store_body_entered):
 		body_entered.connect(_on_store_body_entered)
+
+func set_colors(roof: Color, wall: Color):
+	var mat = $Visuals/Sprite2D.material as ShaderMaterial
+	mat.set_shader_parameter("roof_color", roof)
+	mat.set_shader_parameter("wall_color", wall)
