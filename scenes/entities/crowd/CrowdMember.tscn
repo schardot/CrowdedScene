@@ -1,25 +1,33 @@
-[gd_scene load_steps=4 format=3 uid="uid://dnchrhae8ay0m"]
+[gd_scene load_steps=5 format=3 uid="uid://dnchrhae8ay0m"]
 
 [ext_resource type="Script" uid="uid://dwbr10qtc8i5h" path="res://scenes/entities/crowd/CrowdMember.gd" id="1_g3vus"]
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_kbb3h"]
-load_path = "res://.godot/imported/Crowd member.png-9b4f4854f7d3fb12871aa5ad3a0d55b3.ctex"
+[ext_resource type="SpriteFrames" uid="uid://b85mdnpcek1dn" path="res://scenes/entities/crossing/CrossingNpc.tres" id="2_ofrjr"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_oc416"]
 height = 48.0
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kbb3h"]
+
 [node name="CrowdMember" type="CharacterBody2D" groups=["crowd"]]
 z_index = 2
-scale = Vector2(1.5, 1.5)
 collision_layer = 4
 collision_mask = 0
 script = ExtResource("1_g3vus")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-modulate = Color(1, 0.92261726, 0.8162595, 1)
-position = Vector2(-0.6666651, 0)
-scale = Vector2(0.14611112, 0.09600001)
-texture = SubResource("CompressedTexture2D_kbb3h")
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_oc416")
+
+[node name="PersonalSpace" type="Area2D" parent="."]
+collision_mask = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PersonalSpace"]
+scale = Vector2(2, 2)
+shape = SubResource("CapsuleShape2D_kbb3h")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -8)
+sprite_frames = ExtResource("2_ofrjr")
+animation = &"walk_up"
+
+[connection signal="body_entered" from="PersonalSpace" to="." method="_on_personal_space_body_entered"]
+[connection signal="body_exited" from="PersonalSpace" to="." method="_on_personal_space_body_exited"]
