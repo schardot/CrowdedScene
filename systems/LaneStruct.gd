@@ -12,3 +12,4 @@ func _init(_type: LaneManager.LaneType, _line: Array, _dir: Vector2, _center: Ve
 		line = _line
 		direction = _dir
 		center = _center
+		
