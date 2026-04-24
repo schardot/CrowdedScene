@@ -1,7 +1,7 @@
 extends Node2D
 
 @onready var world: Node2D  = $World
-@onready var player: Node = world.get_player()
+@onready var player: CharacterBody2D = world.get_player()
 @onready var crowd_container: CrowdManager = world.get_crowd()
 @onready var street = world.get_street()
 @onready var car: Node2D = world.get_car()
@@ -22,6 +22,7 @@ func _ready() -> void:
 
 	init_player()
 	init_stores()
+	init_tilemap()
 	init_lanes()
 	crossing_manager.configure(world, crossing_spawn_chance, crossing_try_interval, crossing_row_memory_size)
 	crossing_manager.start_auto_spawn()
@@ -64,6 +65,7 @@ func init_stores():
 
 func init_npcs(lane: LaneStruct):
 	crowd_container.street = street
+	crowd_container.player = player
 	if SceneManager.crowd_positions.size() > 0:
 		for pos in SceneManager.crowd_positions:
 			lane = LaneManager.get_nearest_lane_by_type(pos.x, LaneManager.LaneType.CROWD_MEMBER)
@@ -73,17 +75,37 @@ func init_npcs(lane: LaneStruct):
 		crowd_container.spawn_line(lane.line, lane)
 
 func init_lanes():
-	var i := 0
+	var car_lanes: Array[LaneStruct] = []
 	for lane in LaneManager.LanesArray:	
 		match lane.type:
 			LaneManager.LaneType.CROWD_MEMBER:
-					init_npcs(lane)
+				init_npcs(lane)
 			LaneManager.LaneType.CAR:
-					init_car(lane)
-		i += 1
+				car_lanes.append(lane)
+	
+	if not car_lanes.is_empty():
+		init_car(_get_central_car_lane(car_lanes))
 
 func init_car(lane: LaneStruct) -> void:
 	if not car:
 		return
 	car.lane = lane
 	car.spawn_car(street)
+
+func init_tilemap():
+	LaneManager.set_tilemap(world.get_tilemap())
+	LaneManager.generate_lanes()
+
+func _get_central_car_lane(car_lanes: Array[LaneStruct]) -> LaneStruct:
+	var center_x: float = get_viewport().get_visible_rect().size.x * 0.5
+	var best: LaneStruct = car_lanes[0]
+	var best_width: int = best.line.size()
+	var best_dist: float = absf(best.center.x - center_x)
+	for lane: LaneStruct in car_lanes:
+		var lane_width: int = lane.line.size()
+		var dist: float = absf(lane.center.x - center_x)
+		if lane_width > best_width or (lane_width == best_width and dist < best_dist):
+			best = lane
+			best_width = lane_width
+			best_dist = dist
+	return best
