@@ -1,7 +1,11 @@
 extends CharacterBody2D
 
-@export var  speed := 300.0
+@export var  speed := 300.0 #velocity.length()
+
+# --- BOOST
 signal boost_used
+var is_boosting = false
+# ---------------
 
 var goal_color: GameTypes.ColorType
 var has_goal := false
@@ -10,16 +14,10 @@ var can_move_right := true
 var can_move_up := true
 var can_move_down := true
 var time := 0.0
+var last_direction := Vector2.DOWN
 
-@onready var push_area := $PushArea
+#@onready var push_area := $PushArea
 @onready var thought_bubble := $ThoughtBubble
-
-
-func _process(delta):
-	time += delta    
-	var squash = sin(time * 4.0) * 0.05
-	scale.x = 1.0 + squash
-	scale.y = 1.0 - squash
 	
 func _physics_process(delta: float) -> void:
 	var input_dir := Vector2.ZERO
@@ -33,12 +31,17 @@ func _physics_process(delta: float) -> void:
 		input_dir.y -= 1
 
 	if Input.is_action_just_pressed("push"):
+		is_boosting = true
 		boost_used.emit()
 		var boost_dir: Vector2 = input_dir.normalized()
 		if boost_dir == Vector2.ZERO:
 			boost_dir = velocity.normalized()
 		if boost_dir != Vector2.ZERO:
 			velocity += boost_dir * 700.0
+	
+	if is_boosting:
+		Globals.wait(0.2)
+		is_boosting = false
 
 	# 1. Start from current velocity
 	var desired_velocity = input_dir.normalized() * speed
@@ -48,14 +51,8 @@ func _physics_process(delta: float) -> void:
 	#push_npcs()
 	# 3. Move
 	move_and_slide()
-
-	# 4. Apply crowd push AFTER movement
-	for i in get_slide_collision_count():
-		var collision = get_slide_collision(i)
-		var collider = collision.get_collider()
-
-		if collider.is_in_group("crowd"):
-			velocity += collision.get_normal() * 120
+	
+	update_animation(input_dir)
 
 
 func _ready() -> void:
@@ -79,15 +76,37 @@ func set_movement(left, right, up, down):
 	can_move_down = down
 	can_move_up = up
 
-func push_npcs():
-	var bodies = push_area.get_overlapping_bodies()
-	for body in bodies:
-		if body.is_in_group("crowd"):
-			var dir = (body.global_position - global_position).normalized()
-			body.apply_push(dir)
+func play_anim(name):
+	if $AnimatedSprite2D.animation != name:
+		$AnimatedSprite2D.play(name)
 
 func die() -> void:
-	var sound: Node = get_node_or_null("/root/SoundController")
-	if sound and sound.has_method("play_car_crash_random"):
-		sound.call("play_car_crash_random")
+	SoundController.call("play_car_crash_random")
 	SceneManager.go_to_lose_screen()
+
+func update_animation(input_dir: Vector2):
+	if input_dir != Vector2.ZERO:
+		last_direction = input_dir
+
+	if input_dir == Vector2.ZERO:
+		if abs(last_direction.x) > abs(last_direction.y):
+			if last_direction.x > 0:
+				play_anim("idle_right")
+			else:
+				play_anim("idle_left")
+		else:
+			if last_direction.y > 0:
+				play_anim("idle_down")
+			else:
+				play_anim("idle_up")
+	else:
+		if abs(input_dir.x) > abs(input_dir.y):
+			if input_dir.x > 0:
+				play_anim("walk_right")
+			else:
+				play_anim("walk_left")
+		else:
+			if input_dir.y > 0:
+				play_anim("walk_down")
+			else:
+				play_anim("walk_up")
