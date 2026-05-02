@@ -23,6 +23,9 @@ var scripted_tutorial_car_original_speed: float = 0.0
 var crossing_manager: CrossingManager
 var scripted_car_waiting_start: bool = false
 
+var score: int = 0
+@onready var score_ui: ScoreCounterUI = $"../ScoreCounterUi"
+
 func _ready() -> void:
 	await get_tree().process_frame
 	player = world.get_player()
@@ -33,6 +36,10 @@ func _ready() -> void:
 	crossing_manager.configure(world, TUTORIAL_CROSSING_SPAWN_CHANCE, TUTORIAL_CROSSING_TRY_INTERVAL, TUTORIAL_CROSSING_MEMORY_SIZE)
 	if player.has_signal("boost_used"):
 		player.boost_used.connect(_on_player_boost_used)
+
+	score = 0
+	if score_ui:
+		score_ui.reset()
 
 	init_stores()
 	init_npc()
@@ -52,6 +59,9 @@ func generate_assignment():
 		call_deferred("_start_scripted_tutorial_crossing_event")
 
 func on_assignment_completed() -> void:
+	score += 1
+	if score_ui:
+		score_ui.set_value(score)
 	current_phase += 1
 	if current_phase >= assignment_order.size():
 		tutorial_complete()
