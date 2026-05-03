@@ -5,6 +5,7 @@ extends Node2D
 @onready var crowd_container: CrowdManager = world.get_crowd()
 @onready var car: Node2D = world.get_car()
 @onready var delivery_truck: Node2D = $DeliveryTruck
+@onready var score_ui: ScoreCounterUI = $HudTopRight/HudCanvas/TopBar/ScoreCounterUi
 
 const CAR_SCENE: PackedScene = preload("res://scenes/entities/car/Car.tscn")
 
@@ -16,11 +17,16 @@ var crossing_manager: CrossingManager
 
 var stores: Array = []
 var current_assignment_store: Area2D
+var score: int = 0
 
 func _ready() -> void:
 	add_to_group("game")
 	crossing_manager = CrossingManager.new()
 	add_child(crossing_manager)
+
+	score = 0
+	if score_ui:
+		score_ui.reset()
 
 	init_player()
 	init_stores()
@@ -48,6 +54,9 @@ func generate_assignment() -> void:
 	player.set_goal(current_assignment_store.color, current_assignment_store)
 
 func on_assignment_completed(_completed_store: Area2D) -> void:
+	score += 1
+	if score_ui:
+		score_ui.set_value(score)
 	_completed_store.completed = false
 	_completed_store.unblock_store()
 	#crowd_container.call_deferred("spawn_npc")

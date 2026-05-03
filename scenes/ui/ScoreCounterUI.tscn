@@ -1,0 +1,49 @@
+[gd_scene load_steps=5 format=3 uid="uid://c8yf0s5uv7rp8"]
+
+[ext_resource type="Script" uid="uid://b2lam7pqx4n1q" path="res://scenes/ui/ScoreCounterUI.gd" id="1_score"]
+[ext_resource type="Texture2D" uid="uid://dqfnnptv6fu17" path="res://scenes/ui/ScoreCounterUI.tres" id="2_iamg6"]
+[ext_resource type="Texture2D" uid="uid://bjr6l2ywisefy" path="res://scenes/ui/UI Sheet.tres" id="4_ui_sheet"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xg6pg"]
+atlas = ExtResource("4_ui_sheet")
+region = Rect2(416, 0, 32, 32)
+
+[node name="ScoreCounterUi" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 2
+script = ExtResource("1_score")
+
+[node name="Background" type="TextureRect" parent="."]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_iamg6")
+
+[node name="MarginContainer" type="MarginContainer" parent="Background"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 6
+
+[node name="ScoreButton" type="Button" parent="Background/MarginContainer"]
+texture_filter = 1
+layout_mode = 2
+focus_mode = 0
+mouse_filter = 2
+theme_override_constants/h_separation = 6
+text = "0"
+icon = SubResource("AtlasTexture_xg6pg")
+flat = true
+expand_icon = false
+icon_alignment = 0
