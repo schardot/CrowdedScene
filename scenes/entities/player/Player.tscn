@@ -16,6 +16,7 @@ radius = 15.0
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_hgjck"]
 shader = ExtResource("4_rqwkw")
 shader_parameter/tint = Color(1, 1, 1, 1)
+shader_parameter/outline_luminance_max = 0.12
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_rqwkw"]
 atlas = ExtResource("4_30dhn")
@@ -28,11 +29,13 @@ atlas = SubResource("AtlasTexture_rqwkw")
 collision_layer = 2
 collision_mask = 13
 script = ExtResource("1_afppm")
+box_hand_offset_left = Vector2(-20, 0)
+box_hand_offset_right = Vector2(20, 0)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(1, 0)
 sprite_frames = ExtResource("2_n1xdv")
-animation = &"walk_right"
+animation = &"walk_down"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-1.3333334, 7.3333335)
@@ -49,10 +52,9 @@ scale = Vector2(2.4, 2.4)
 shape = SubResource("CircleShape2D_afppm")
 
 [node name="Box" type="Node2D" parent="."]
-position = Vector2(-20, -92)
 script = ExtResource("2_4kuee")
 
 [node name="Sprite2D" type="Sprite2D" parent="Box"]
 material = SubResource("ShaderMaterial_hgjck")
-position = Vector2(-4, 98)
+position = Vector2(1, 20)
 texture = SubResource("AtlasTexture_hgjck")
