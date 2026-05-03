@@ -5,7 +5,7 @@ extends Node2D
 @onready var crowd_container: CrowdManager = world.get_crowd()
 @onready var car: Node2D = world.get_car()
 @onready var delivery_truck: Node2D = $DeliveryTruck
-@onready var score_ui: ScoreCounterUI = $ScoreCounterUi
+@onready var score_ui: ScoreCounterUI = $HudTopRight/HudCanvas/TopBar/ScoreCounterUi
 
 const CAR_SCENE: PackedScene = preload("res://scenes/entities/car/Car.tscn")
 

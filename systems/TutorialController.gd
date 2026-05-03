@@ -24,7 +24,7 @@ var crossing_manager: CrossingManager
 var scripted_car_waiting_start: bool = false
 
 var score: int = 0
-@onready var score_ui: ScoreCounterUI = $"../ScoreCounterUi"
+@onready var score_ui: ScoreCounterUI = $"../HudTopRight/HudCanvas/TopBar/ScoreCounterUi"
 
 func _ready() -> void:
 	await get_tree().process_frame
